@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'Alliance-Logger'`, () => {
+  it(`should have as title 'AllianceLogger'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('Alliance-Logger');
+    expect(app.title).toEqual('AllianceLogger');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('Alliance-Logger app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('AllianceLogger app is running!');
   });
 });

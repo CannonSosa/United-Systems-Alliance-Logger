@@ -1,9 +1,10 @@
-import { PostLogsService } from './../../services/post-logs.service';
+import { PostLogsService } from './../../Services/post-logs.service';
+import { SelectionModel } from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource} from '@angular/material/table';
-import { SelectionModel} from '@angular/cdk/collections';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 export interface Log{
   LogID: number,
@@ -22,46 +23,53 @@ export interface Log{
   styleUrls: ['./log-table.component.css']
 })
 export class LogTableComponent implements OnInit, AfterViewInit {
-
-  displayedColumns: string[] = ['LogID','Application', 'ApplicationVersion', 'CustomerID', 'CompanyID','LogDateTime','LogContent'];
-  logList = new MatTableDataSource<Log>([]);
+  color = "black";
+  logTabs: string[] = ['dashboard', 'Bookmarked','Recent'];
+  displayedColumns: string[] = ['Select','LogID','Application', 'ApplicationVersion', 'CustomerID', 'CompanyID','LogDateTime','LogContent','Actions'];
+  dataSource = new MatTableDataSource<Log>([]);
+  clickedRows = new Set<Log>();
+  bookmarked: number[] = [];
   selection = new SelectionModel<Log>(true, []);
-  
+
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private service: PostLogsService) { }
+  constructor(private service: PostLogsService ) {}
 
   ngOnInit(): void {
-    this.fetchLogs();
+    this.fetchLogs()
   }
-
-  ngAfterViewInit(): void {  
-    this.logList.sort = this.sort;
-    this.logList.paginator = this.paginator;
-   }
 
   fetchLogs(): void {
     this.service.getLogs().subscribe((data) => {
-      this.logList.data = data as Log[];
+      this.dataSource.data = data as Log[];
     });
   }
 
-  //FILTER
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.displayedColumns, event.previousIndex, event.currentIndex);
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.logList.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    if (this.logList.paginator) {
-      this.logList.paginator.firstPage();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
-  //SELECT 
+  //SELECT
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.logList.data.length;
+    const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
@@ -71,7 +79,7 @@ export class LogTableComponent implements OnInit, AfterViewInit {
       this.selection.clear();
       return;
     }
-    this.selection.select(...this.logList.data);
+    this.selection.select(...this.dataSource.data);
   }
 
   /** The label for the checkbox on the passed row */
@@ -81,6 +89,8 @@ export class LogTableComponent implements OnInit, AfterViewInit {
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.LogID + 1}`;
   }
+
+
 
 
 }
