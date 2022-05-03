@@ -1,10 +1,20 @@
-import { Component } from '@angular/core';
+import { PostLogsService } from './services/post-logs.service';
+import { Component, OnInit } from '@angular/core';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'Alliance-Logger';
+export class AppComponent implements OnInit {
+
+    
+  constructor(){  }
+
+  ngOnInit(): void {}
+  
+
+  
+
 }

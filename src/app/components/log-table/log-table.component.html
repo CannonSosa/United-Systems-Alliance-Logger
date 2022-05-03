@@ -1,0 +1,64 @@
+<p class="bg-blue-500">log-table works!</p>
+
+<div class="table-container">
+    <table mat-table [dataSource]="logList" matSort>
+        
+      <!-- Checkbox Column -->
+        <ng-container matColumnDef="Select">
+            <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="LogID">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Log ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.LogID}} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Application">
+            <th mat-header-cell *matHeaderCellDef> Application </th>
+            <td mat-cell *matCellDef="let element"> {{element.Application}} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="ApplicationVersion">
+            <th mat-header-cell *matHeaderCellDef> App Version </th>
+            <td mat-cell *matCellDef="let element"> {{element.ApplicationVersion}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="CustomerID">
+            <th mat-header-cell *matHeaderCellDef> Customer ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.CustomerID}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="CompanyID">
+            <th mat-header-cell *matHeaderCellDef> Company ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.CompanyID}} </td>
+        </ng-container>
+
+          <ng-container matColumnDef="LogDateTime">
+              <th mat-header-cell *matHeaderCellDef> Date/Time </th>
+              <td mat-cell *matCellDef="let element"> {{element.LogDateTime}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="LogContent">
+              <th mat-header-cell *matHeaderCellDef> Content </th>
+              <td mat-cell *matCellDef="let element"> {{element.LogContent}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns, sticky:true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                  (click)="selection.toggle(row)">
+              </tr>
+    </table>
+</div>
