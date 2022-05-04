@@ -11,10 +11,9 @@ export class PostLogsService {
 
   getLogs(){
     //returns observable
-    return this.http.get(this.url); 
+    return this.http.get(this.url);
   }
 
-  
   // updateLog(log:any){
   //   return this.http.put(this.url + '/' + log.id, log)
   // }

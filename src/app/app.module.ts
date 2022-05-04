@@ -26,6 +26,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { LogDisplayComponent } from './components/log-display/log-display.component';
 import { LogTableComponent } from './components/log-table/log-table.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { InfoDisplayComponent } from './components/info-display/info-display.component';
 
 
 
@@ -38,7 +39,8 @@ import { FooterComponent } from './components/footer/footer.component';
     SidebarComponent,
     LogDisplayComponent,
     LogTableComponent,
-    FooterComponent
+    FooterComponent,
+    InfoDisplayComponent
   ],
   imports: [
     BrowserModule,

@@ -25,6 +25,7 @@ export interface Log{
 export class LogTableComponent implements OnInit, AfterViewInit {
   color = "black";
   logTabs: string[] = ['dashboard', 'Bookmarked','Recent'];
+
   displayedColumns: string[] = ['Select','LogID','Application', 'ApplicationVersion', 'CustomerID', 'CompanyID','LogDateTime','LogContent','Actions'];
   dataSource = new MatTableDataSource<Log>([]);
   clickedRows = new Set<Log>();
