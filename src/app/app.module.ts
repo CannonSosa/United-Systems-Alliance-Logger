@@ -1,6 +1,4 @@
-import { AuthenticationService } from './services/authentication.service';
-import { BookmarkService } from './services/bookmark.service';
-import { PostLogsService } from './services/post-logs.service';
+import { PostLogsService } from 'services/post-logs.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -23,13 +21,15 @@ import { MatDialogModule } from '@angular/material/dialog'
 import { MatCardModule } from '@angular/material/card'
 import { MatToolbarModule} from '@angular/material/toolbar'
 
-import { LogTableComponent } from './components/log-table/log-table.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { LoginCardComponent } from './components/login-card/login-card.component';
 import { LogDashboardComponent } from './pages/log-dashboard/log-dashboard.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { LogDisplayComponent } from './components/log-display/log-display.component';
-import { LogDisplayStickyComponent } from './components/log-display-sticky/log-display-sticky.component';
+import { LogTableComponent } from './components/log-table/log-table.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { LogInfoCardComponent } from './components/log-info-card/log-info-card.component';
+
 
 
 
@@ -39,11 +39,12 @@ import { LogDisplayStickyComponent } from './components/log-display-sticky/log-d
     AppComponent,
     LoginPageComponent,
     LoginCardComponent,
-    LogTableComponent,
     LogDashboardComponent,
     SidebarComponent,
     LogDisplayComponent,
-    LogDisplayStickyComponent
+    LogTableComponent,
+    FooterComponent,
+    LogInfoCardComponent,
   ],
   imports: [
     BrowserModule,
@@ -65,9 +66,7 @@ import { LogDisplayStickyComponent } from './components/log-display-sticky/log-d
     MatToolbarModule
   ],
   providers: [
-    PostLogsService,
-    BookmarkService,
-    AuthenticationService
+    PostLogsService
   ],
   bootstrap: [AppComponent],
 })

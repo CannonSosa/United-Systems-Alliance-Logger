@@ -1,6 +1,5 @@
-import { AuthenticationService } from './../../services/authentication.service';
-import { PostLogsService } from '../../services/post-logs.service';
 import { Component, OnInit } from '@angular/core';
+import { PostLogsService } from 'services/post-logs.service';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
@@ -12,8 +11,9 @@ export class LoginCardComponent implements OnInit {
 
   public user: string = '';
   public password: string = '';
+  hide = true;
 
-  constructor(private service: AuthenticationService) { }
+  constructor(private service: PostLogsService) { }
 
   ngOnInit(): void {
   }

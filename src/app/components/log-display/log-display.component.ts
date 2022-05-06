@@ -1,7 +1,4 @@
-import { AuthenticationService } from './../../services/authentication.service';
-import { BookmarkService } from './../../services/bookmark.service';
-import { PostLogsService } from '../../services/post-logs.service';
-
+import { PostLogsService } from './../../../../services/post-logs.service';
 import { HttpClient } from '@angular/common/http';
 import {SelectionModel} from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild, Inject } from '@angular/core';
@@ -10,8 +7,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-
 
 export interface postBookMark{
   Id: number,
@@ -59,7 +54,8 @@ export interface Log{
   styleUrls: ['./log-display.component.css']
 })
 export class LogDisplayComponent implements OnInit, AfterViewInit {
-  // logs: any =[];
+  private startDate: Date = new Date();
+  private endDate: Date = new Date();
   displayedColumns: string[] = ['select','logID', 'application', 'applicationVersion', 'userID', 'companyId','logDateTime','logContent','actions'];
   dataSource = new MatTableDataSource<Log>([]);
   copyDataSource = new MatTableDataSource<Log >([]);
@@ -67,20 +63,11 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   bookmarks = new MatTableDataSource<getBookMark>([]);
   bookmarkSelection = new SelectionModel<getBookMark>(true, []);
 
-
-  private startDate: Date = new Date();
-  private endDate: Date = new Date();
-
-
-
-
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-    constructor(private http: HttpClient,
+  constructor(private http: HttpClient,
       private service: PostLogsService,
-      private bmkService: BookmarkService,
-      private authService: AuthenticationService,
       private dialog: MatDialog) {}
 
   ngOnInit(): void {
@@ -90,13 +77,12 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
     this.service.getLogs().subscribe((data) => {
       this.copyDataSource.data = data as Log[];
     })
-
   }
+
   //Dialog Box For Notes
   openNoteDialog(){
-
     }
-  //PAGINATION
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -117,8 +103,6 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   }
 
 
-
-  //SELECT
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -153,12 +137,9 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
         console.log(copy[i]);
         j = j + 1;
       }
-
     }
-
     this.service.deleteLogs(sortedId);
     this.refresh();
-
   }
 
   getLogIdArray(logId: Log){
@@ -166,30 +147,28 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   }
 
   /** Bookmark */
-
   saveUserBookmark(){
     var bookmark: postBookMark = {Id : 0, UserID : 0, LogID: 0}; //LogID needs to be retrieved.
 
-    this.bmkService.addUserBookmarks(bookmark);
-    this.authService.getJwtToken();
+    this.service.addUserBookmarks(bookmark);
+    this.service.getJwtToken();
     var bookmarks: getBookMark[] = this.bookmarks.data;
     for (let i = 0; i < bookmarks.length; i++){
       if (bookmark.LogID != bookmarks[i].logID && bookmark.UserID == bookmarks[i].userID){
-        this.bmkService.addUserBookmarks(bookmark);
+        this.service.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else if(bookmark.LogID == bookmarks[i].logID && bookmark.UserID != bookmarks[i].userID){
-        this.bmkService.addUserBookmarks(bookmark);
+        this.service.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else if(bookmark.LogID != bookmarks[i].logID && bookmark.UserID != bookmarks[i].userID){
-        this.bmkService.addUserBookmarks(bookmark);
+        this.service.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else {
         console.log("Already in system");
       }
-
     }
 
   }
@@ -213,25 +192,22 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
 
   /** DateRange Filter */
   getStartDate(){
-    return this.startDate;
-  }
+    return this.startDate;}
+
   setStartDate(date: Date){
-    this.startDate = date;
-  }
+    this.startDate = date;}
 
   getEndDate(){
-    return this.endDate;
-  }
+    return this.endDate;}
+
   setEndDate(date: Date){
-    this.endDate = date;
-  }
+    this.endDate = date;}
 
   applyDateRangeFilter(start: Date, end: Date){
     var startDate = (start.toISOString);
     var endDate = (end.toISOString);
     this.dataSource.data = this.copyDataSource.data.filter(e=>(new Date(e.logDateTime))  >= start && (new Date(e.logDateTime) <= end));
     console.log(start, end);
-
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -249,15 +225,11 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   }
 
  /** Getters and Setters For Log */
-
   setLogId(){
-
   }
 
-
-
   setUserId(){
-    var token = this.authService.getJwtToken();
+    var token = this.service.getJwtToken();
     var userID: number;
     var tokenParse = JSON.parse(atob(token.split('.')[1]));
     userID = (tokenParse['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
