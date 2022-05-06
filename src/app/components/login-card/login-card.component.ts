@@ -1,4 +1,6 @@
+import { LoginService } from './../../services/login.service';
 import { Component, OnInit } from '@angular/core';
+import { PostLogsService } from 'src/app/services/post-logs.service';
 
 @Component({
   selector: 'login-card',
@@ -7,9 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoginCardComponent implements OnInit {
 
-  constructor() { }
+  public user: string = '';
+  public password: string = '';
+
+  constructor(private service: LoginService) { }
 
   ngOnInit(): void {
   }
+
+    login(){
+    var User = this.user;
+    var password = this.password;
+    console.log(User);
+    console.log(password);
+    var token = this.service.userLogin(User, password);
+    console.log(token);
+  }
+
+
 
 }

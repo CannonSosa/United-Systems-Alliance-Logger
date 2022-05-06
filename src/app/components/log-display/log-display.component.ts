@@ -1,4 +1,4 @@
-import { PostLogsService } from './../../Services/post-logs.service';
+import { PostLogsService } from './../../services/post-logs.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';

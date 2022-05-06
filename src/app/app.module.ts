@@ -1,8 +1,9 @@
-import { PostLogsService } from './Services/post-logs.service';
+import { PostLogsService } from './services/post-logs.service';
 
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCardModule } from '@angular/material/card'
 
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { LoginCardComponent } from './components/login-card/login-card.component';
@@ -26,7 +29,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { LogDisplayComponent } from './components/log-display/log-display.component';
 import { LogTableComponent } from './components/log-table/log-table.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { InfoDisplayComponent } from './components/info-display/info-display.component';
 
 
 
@@ -39,8 +41,7 @@ import { InfoDisplayComponent } from './components/info-display/info-display.com
     SidebarComponent,
     LogDisplayComponent,
     LogTableComponent,
-    FooterComponent,
-    InfoDisplayComponent
+    FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +56,10 @@ import { InfoDisplayComponent } from './components/info-display/info-display.com
     MatIconModule,
     MatCheckboxModule,
     MatToolbarModule,
-    MatTabsModule
+    MatTabsModule,
+    MatDatepickerModule,
+    MatCardModule,
+    FormsModule
   ],
   providers: [
     PostLogsService
