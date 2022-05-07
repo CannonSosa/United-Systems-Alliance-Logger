@@ -1,3 +1,4 @@
+import { RouterModule } from '@angular/router';
 import { PostLogsService } from 'services/post-logs.service';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -63,7 +64,17 @@ import { LogInfoCardComponent } from './components/log-info-card/log-info-card.c
     MatNativeDateModule,
     MatDialogModule,
     MatCardModule,
-    MatToolbarModule
+    MatToolbarModule,
+    RouterModule.forRoot([
+      {
+        path: 'login',
+        component: LoginPageComponent
+      },
+      { path: 'dashboard',
+      component: LogDashboardComponent
+      }
+    ])
+
   ],
   providers: [
     PostLogsService
