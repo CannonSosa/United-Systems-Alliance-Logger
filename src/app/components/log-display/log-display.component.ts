@@ -1,12 +1,14 @@
-import { PostLogsService } from './../../../../services/post-logs.service';
+import { PostLogsService } from './../../services/post-logs.service';
+import { BookmarkService } from 'src/app/services/bookmark.service';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { HttpClient } from '@angular/common/http';
 import {SelectionModel} from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild, Inject } from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { NoteDialogComponent } from 'src/app/dialog/note-dialog/note-dialog.component';
 
 export interface postBookMark{
   Id: number,
@@ -56,19 +58,24 @@ export interface Log{
 export class LogDisplayComponent implements OnInit, AfterViewInit {
   private startDate: Date = new Date();
   private endDate: Date = new Date();
+  isBookmarked = false;
+  bmkColor = 'black';
   displayedColumns: string[] = ['select','logID', 'application', 'applicationVersion', 'userID', 'companyId','logDateTime','logContent','actions'];
   dataSource = new MatTableDataSource<Log>([]);
   copyDataSource = new MatTableDataSource<Log >([]);
   selection = new SelectionModel<Log>(true, []);
   bookmarks = new MatTableDataSource<getBookMark>([]);
-  bookmarkSelection = new SelectionModel<getBookMark>(true, []);
+  private note: any;
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private http: HttpClient,
       private service: PostLogsService,
-      private dialog: MatDialog) {}
+      private bookmarkService: BookmarkService,
+      private authService: AuthenticationService,
+      private dialog : MatDialog
+      ) {}
 
   ngOnInit(): void {
     this.service.getLogs().subscribe((data) => {
@@ -81,6 +88,53 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
 
   //Dialog Box For Notes
   openNoteDialog(){
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+
+    dialogConfig.position = {
+      'top': '10',
+    };
+
+    let dialogRef = this.dialog.open(NoteDialogComponent, dialogConfig)
+
+    dialogRef.afterClosed()
+    .subscribe(response => {
+      console.log(response);
+      this.setNote(response);
+    });
+
+  }
+
+    addNotes(){
+
+      console.log(this.selection.selected);
+
+    for(let i = 0; i < this.selection.selected.length; i++){
+      this.selection.selected[i].noteContent = this.getNote();
+      this.addNote(this.selection.selected[i]);
+      console.log(this.selection.selected[i]);
+    }
+
+    this.selection.clear();
+
+  }
+
+
+
+    addNote(log: Log){
+      var jsonLog = JSON.stringify(log);
+      this.service.updateLog(jsonLog);
+      console.log("gets here");
+    }
+
+    setNote(note: string){
+      this.note = note;
+    }
+
+    getNote(){
+      return this.note;
     }
 
   ngAfterViewInit(): void {
@@ -91,6 +145,7 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   refresh(){
     this.dataSource._updateChangeSubscription();
     this.ngAfterViewInit();
+
   }
 
   applyFilter(event: Event) {
@@ -111,59 +166,49 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   }
 
   deleteSelected(){
-    var selectedLogs = [];
     var id = [];
     var size;
     var sortedId = [];
-    var copy: Log[] = this.copyDataSource.data;
+    var copy: Log[] = this.dataSource.data;
     let j = 0;
-    selectedLogs = this.selection.selected;
-    console.log(this.selection.select);
-    console.log(selectedLogs);
-    size = selectedLogs.length
-    for(let i = 0; i < size ; i++){
-      id[i] = this.getLogIdArray(selectedLogs[i])
+
+    for(let i = 0; i < this.selection.selected.length ; i++){
+      id[i] = this.selection.selected[i].logID;
     }
-
     sortedId = id.sort((n1,n2) => n1 - n2);
-
+    console.log(sortedId);
     for(let i = 0; i < copy.length; i++){
-      console.log(copy[i].logID + "i(outer)");
-      console.log(sortedId[j] + "j(outer)");
       if(copy[i].logID == sortedId[j]){
-        console.log(copy[i].logID + "i(inner)");
-        console.log(sortedId[j]+ "j(inner)");
-        this.dataSource.data.splice(i , sortedId.length);
-        console.log(copy[i]);
-        j = j + 1;
+       this.dataSource.data.splice(i, 1);
+       j++;
+       i--;
       }
     }
     this.service.deleteLogs(sortedId);
     this.refresh();
-  }
-
-  getLogIdArray(logId: Log){
-    return logId.logID;
+    this.selection.clear();
   }
 
   /** Bookmark */
   saveUserBookmark(){
     var bookmark: postBookMark = {Id : 0, UserID : 0, LogID: 0}; //LogID needs to be retrieved.
 
-    this.service.addUserBookmarks(bookmark);
-    this.service.getJwtToken();
+    this.bookmarkService.addUserBookmarks(bookmark);
     var bookmarks: getBookMark[] = this.bookmarks.data;
+
+    bookmark.UserID = this.getUserId();
+
     for (let i = 0; i < bookmarks.length; i++){
       if (bookmark.LogID != bookmarks[i].logID && bookmark.UserID == bookmarks[i].userID){
-        this.service.addUserBookmarks(bookmark);
+        this.bookmarkService.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else if(bookmark.LogID == bookmarks[i].logID && bookmark.UserID != bookmarks[i].userID){
-        this.service.addUserBookmarks(bookmark);
+        this.bookmarkService.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else if(bookmark.LogID != bookmarks[i].logID && bookmark.UserID != bookmarks[i].userID){
-        this.service.addUserBookmarks(bookmark);
+        this.bookmarkService.addUserBookmarks(bookmark);
         i = (bookmarks.length) - 1
       }
       else {
@@ -204,9 +249,9 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
     this.endDate = date;}
 
   applyDateRangeFilter(start: Date, end: Date){
-    var startDate = (start.toISOString);
-    var endDate = (end.toISOString);
-    this.dataSource.data = this.copyDataSource.data.filter(e=>(new Date(e.logDateTime))  >= start && (new Date(e.logDateTime) <= end));
+    if (start != end)
+      this.dataSource.data = this.copyDataSource.data.filter(e=>(new Date(e.logDateTime))  >= start && (new Date(e.logDateTime) <= end));
+
     console.log(start, end);
 
     if (this.dataSource.paginator) {
@@ -225,17 +270,22 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   }
 
  /** Getters and Setters For Log */
-  setLogId(){
+
+  getJwtToken(){
+   var token = this.authService.setJwtToken();
+   console.log(token);
+   return (JSON.parse(token));
   }
 
-  setUserId(){
-    var token = this.service.getJwtToken();
+
+  getUserId(){
+    var token = (this.getJwtToken()['token']);
     var userID: number;
     var tokenParse = JSON.parse(atob(token.split('.')[1]));
     userID = (tokenParse['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
-    console.log(userID);
     return(userID);
   }
+
 
 
 }

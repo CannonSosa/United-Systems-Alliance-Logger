@@ -1,6 +1,6 @@
-import { AuthenticationService } from './../../authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { Component, OnInit } from '@angular/core';
-import { PostLogsService } from 'services/post-logs.service';
+import { PostLogsService } from './../../services/post-logs.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -29,18 +29,14 @@ export class LoginCardComponent implements OnInit {
 
     var token = this.service.userLogin(User, password);
     console.log(token);
-    this.gotoLogin();
+    this.goToDash();
   }
 
-  gotoLogin() {
-    this.router.navigate(['/login']).then( (e) => {
-      if (e) {
-        console.log("Navigation is successful!");
-      } else {
-        console.log("Navigation has failed!");
-      }
-    });
+  goToDash() {
+    this.router.navigate(['../dashboard'])
+
   }
+
 
 
 

@@ -1,3 +1,4 @@
+import { BookmarkService } from './../../../assets/img/services/bookmark.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,8 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
+  bookmarkCount = 0;
 
-  constructor() {}
+  constructor(private service: BookmarkService) {}
+
 
   ngOnInit(): void {}
 

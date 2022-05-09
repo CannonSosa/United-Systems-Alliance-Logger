@@ -1,5 +1,5 @@
 import { RouterModule } from '@angular/router';
-import { PostLogsService } from 'services/post-logs.service';
+import { PostLogsService } from './services/post-logs.service'
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -19,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card'
 import { MatToolbarModule} from '@angular/material/toolbar'
 
@@ -27,9 +29,9 @@ import { LoginCardComponent } from './components/login-card/login-card.component
 import { LogDashboardComponent } from './pages/log-dashboard/log-dashboard.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { LogDisplayComponent } from './components/log-display/log-display.component';
-import { LogTableComponent } from './components/log-table/log-table.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { LogInfoCardComponent } from './components/log-info-card/log-info-card.component';
+import { NoteDialogComponent } from './dialog/note-dialog/note-dialog.component';
 
 
 
@@ -43,9 +45,9 @@ import { LogInfoCardComponent } from './components/log-info-card/log-info-card.c
     LogDashboardComponent,
     SidebarComponent,
     LogDisplayComponent,
-    LogTableComponent,
     FooterComponent,
     LogInfoCardComponent,
+    NoteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -65,20 +67,14 @@ import { LogInfoCardComponent } from './components/log-info-card/log-info-card.c
     MatDialogModule,
     MatCardModule,
     MatToolbarModule,
-    RouterModule.forRoot([
-      {
-        path: 'login',
-        component: LoginPageComponent
-      },
-      { path: 'dashboard',
-      component: LogDashboardComponent
-      }
-    ])
+    RouterModule,
+    AppRoutingModule
 
   ],
   providers: [
     PostLogsService
   ],
   bootstrap: [AppComponent],
+  entryComponents: [NoteDialogComponent]
 })
 export class AppModule { }
